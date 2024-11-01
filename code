@@ -1,0 +1,55 @@
+# Create a Bar in ggplot2
+
+# Xlsx import using readxl
+
+library(readxl)
+COVID_data <- read_excel("COVID-CasesDeathsHosp(Europe and Americas).xlsx", sheet = "data")
+
+# Install 'ggplot2'
+
+install.packages("tidyverse")
+
+# Load library ggplot2
+
+library(ggplot2)
+
+# Bar plot - Count number of rows 
+
+ggplot ( COVID_data, aes( x = Date)) +
+  geom_bar()
+
+# Bar plot - Sum of Cases by Date - geom_bar
+
+ggplot ( COVID_data, aes( x = Date,  y = NewCases)) +
+  geom_bar(stat = "identity")
+
+# Bar plot - Sum of Cases by Date - geom_col
+
+ggplot ( COVID_data, aes( x = Date,  y = NewCases)) +
+  geom_col()
+
+
+# Load libraries dplyr for data transformation & scales for x & y axis formatting
+
+library(dplyr)
+library(scales)  
+
+# Create a column to show month and year
+
+COVID_data$month <-
+  as.Date(cut(COVID_data$Date, breaks = 'month'))
+
+# Filter data by UK only
+
+COVID_data %>%
+  filter(Location == "United Kingdom") %>%
+  
+  # Bar plot - Sum of Cases in the UK by Month & Year with x & y axis formatting
+  
+  ggplot ( aes( x = month,  y = NewCases)) +
+  geom_col(fill = "darkblue") +
+  scale_y_continuous(labels = comma, breaks = seq(0, 1800000, 100000)) +
+  scale_x_date(date_labels = "%b-%y" , breaks = "1 month") +
+  theme(axis.text.x = element_text ( size = 10, angle = 90)) +
+  labs(x = "Date", y = "New Cases")
+
